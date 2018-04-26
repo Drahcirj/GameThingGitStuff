@@ -1,8 +1,7 @@
-
 public abstract class Item extends Block{
 	private Grid grid;
 	private int xPos, yPos;
-	
+	//something
 	public Item(Grid grid){
 		super(Block.Fill.Item);
 		this.grid = grid;
