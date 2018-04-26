@@ -31,10 +31,11 @@ public class Player extends Block{
 		image = "Isaac.png";
 		pic = new ImageIcon(Player.class.getResource(image));
 		health = MAXHEALTH;
-		weapon = new Fist(grid);
+		//		weapon = new Fist(grid);
+		weapon = null;
 		inv = new Inventory(this);
 	}
-	
+
 	public Player(Grid grid, int xPos, int yPos){
 		super(true);
 		this.grid = grid;
@@ -50,7 +51,8 @@ public class Player extends Block{
 		image = "Isaac.png";
 		pic = new ImageIcon(Player.class.getResource(image));
 		health = MAXHEALTH;
-		weapon = new Fist(grid);
+		//		weapon = new Fist(grid);
+		weapon = null;
 		inv = new Inventory(this);
 	}
 
@@ -61,7 +63,7 @@ public class Player extends Block{
 	public int getYPos(){
 		return yPos;
 	}
-	
+
 	public Grid getGrid(){
 		return grid;
 	}
@@ -69,15 +71,15 @@ public class Player extends Block{
 	public void setColor(Color c){
 		playerColor = c;
 	}
-	
+
 	public ImageIcon getPic(){
 		return pic;
 	}
-	
+
 	public Weapon getWeapon(){
 		return weapon;
 	}
-	
+
 	public Inventory getInventory(){
 		return inv;
 	}
@@ -129,26 +131,30 @@ public class Player extends Block{
 	public void interact(Block i){
 		if(i.isPlayer()){
 			Player p = (Player)i;
-			p.setHealth(p.getHealth() - weapon.getDamage());
+			try{
+				p.setHealth(p.getHealth() - weapon.getDamage());
+			} catch(NullPointerException e){
+				p.setHealth(p.getHealth() - 5);
+			}
 		}
 		else
 			i.interact(this);
 	}
-	
+
 	public int getHealth(){
 		return health;
 	}
-	
+
 	public void setHealth(int h){
 		health = h;
 	}
-	
+
 	protected void drawHealth(Graphics myBuffer){
 		int healthIncrement = getWidth() / MAXHEALTH;
 		myBuffer.setColor(Color.RED);
 		myBuffer.fillRect(getX(), getY() - 5, getWidth() - ((MAXHEALTH - health) * healthIncrement), 7);
 	}
-	
+
 	public boolean changeRoomVertical(Grid dest){
 		if(!dest.getBlock(xPos, (yPos == 0) ? dest.getRows() - 1 : 0).isFilled()){
 			grid.setBlock(xPos, yPos, new Block(getX(), getY(), getWidth(), getHeight(), false));
@@ -185,6 +191,11 @@ public class Player extends Block{
 
 	public void draw(Graphics myBuffer){
 		myBuffer.drawImage(pic.getImage(), getX(), getY(), getWidth(), getHeight(), null);
+		try{
+			myBuffer.drawImage(weapon.getPic().getImage(), getX() + getWidth() - 50, getY() + 50, 50, 50, null);
+		} catch(NullPointerException e){
+			
+		}
 		drawHealth(myBuffer);
 	}
 
@@ -201,11 +212,11 @@ public class Player extends Block{
 	public String toString(){
 		return "player";
 	}
-	
+
 	public boolean isPlayer(){
 		return true;
 	}
-	
+
 	public void setRoom(Grid dest){
 		int xdest = (int)(Math.random() * (dest.getColumns() - 2) + 1);
 		int ydest = (int)(Math.random() * (dest.getRows() - 2) + 1);
@@ -217,7 +228,7 @@ public class Player extends Block{
 		dest.setBlock(xdest, ydest, this);
 		grid = dest;
 	}
-	
+
 	public void setWeapon(Weapon w){
 		weapon = w;
 	}

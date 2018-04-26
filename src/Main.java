@@ -1,6 +1,9 @@
 import javax.swing.*;
-import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.event.*;
 
 public class Main extends JPanel{
@@ -19,9 +22,11 @@ public class Main extends JPanel{
 	private int roomX, roomY;
 	private MapSwitch door;
 	private Monster satan;
+	private List<Monster> mobs;
 	private static Main obj;
 	private Inventory playerInv;
 	private KeyListener kl;
+	private Sword[] swords = new Sword[(int)(Math.random() * 6)];
 
 	public boolean randomBoolean(int chance){
 		int i = (int)(Math.random() * chance + 1);
@@ -32,7 +37,7 @@ public class Main extends JPanel{
 	public Main getMain(){
 		return this;
 	}
-	
+
 	public Timer getTimer(){
 		return t;
 	}
@@ -47,19 +52,20 @@ public class Main extends JPanel{
 
 	public void start(){
 		frame.setContentPane(this);
-//		t.start();
+		//		t.start();
 		frame.setVisible(true);
 		t.start();
 		addKeyListener(kl);
 		setFocusable(true);	
-//		frame.setFocusableWindowState(true);
+		//		frame.setFocusableWindowState(true);
 	}
 
 	public Main(JFrame frame){
-		this.frame = frame;
+		//		this.frame = frame;
 		myImage = new BufferedImage(FRAMEX, FRAMEY, BufferedImage.TYPE_INT_RGB);
 		myBuffer = myImage.getGraphics();
 		setLayout(null);
+		setBackground(new Color(107, 69, 56));
 
 		map = new Map();
 
@@ -76,17 +82,23 @@ public class Main extends JPanel{
 		playerInv.setLocation(FRAMEX - (playerInv.getWidth() + 20), 20);
 		playerInv.setVisible(false);
 
-		satan = new Monster(grid2);
+		satan = new Monster(map.getRoom((int)(Math.random() * map.getColumns()), (int)(Math.random() * map.getRows())));
+		mobs = new ArrayList<Monster>();
+		mobs.add(satan);
 
 		door = new MapSwitch(map.getRoom((int)(Math.random() * map.getColumns()), (int)(Math.random() * map.getRows())));
 
 		//		System.out.println(grid2.getBlock(0,0));
 		//		System.out.println(door);
+		for(int i = 0; i < swords.length; i++){
+			swords[i] = new Sword(map.getRoom((int)(Math.random() * map.getColumns()), (int)(Math.random() * map.getRows())));
+			System.out.println(swords[i]);
+		}
 
 		t = new Timer(100, new Listener());
 		t.start();
 		timeCount = 0;
-		
+
 		kl = new KeyListener();
 		addKeyListener(kl);
 		setFocusable(true);
@@ -98,12 +110,17 @@ public class Main extends JPanel{
 				player.setHealth(player.getHealth() + 1);
 			//			if(satan.getHealth() < satan.MAXHEALTH)
 			//				satan.setHealth(satan.getHealth() + 1);
+			
+			
+			
 			update();
 			if(timeCount % 2 == 0){
-				if(player.getGrid() == satan.getGrid()){
-					satan.follow(player);
-					if(satan.nextTo(player) && timeCount % ((int)(Math.random() * 10 + 1)) == 0)
-						satan.interact(player);
+				for(Monster mob : mobs){
+					if(player.getGrid() == mob.getGrid()){
+						mob.follow(player);
+						if(mob.nextTo(player) && timeCount % ((int)(Math.random() * 10 + 1)) == 0)
+							mob.interact(player);
+					}
 				}
 			}
 			//			System.out.println(player.getXPos() + "," + player.getYPos() + "\t" + satan.getXPos() + "," + satan.getYPos());
@@ -115,12 +132,18 @@ public class Main extends JPanel{
 				myBuffer.drawString("You Lose!", FRAMEX / 2, FRAMEY / 2);
 				t.stop();
 			}
-			if(satan.getHealth() <= 0){
-				myBuffer.setColor(Color.RED);
-				myBuffer.drawString("You Win", FRAMEX / 2, FRAMEY / 2);
-				satan.setRoom(map.getRoom((int)(Math.random() * map.getColumns()), (int)(Math.random() * map.getRows())));
-				//				satan.setRoom(map.getRoom(2, 1));
-				satan.setHealth(satan.MAXHEALTH);
+			for(Monster mob : mobs){
+				if(mob.getHealth() <= 0){
+					myBuffer.setColor(Color.RED);
+					myBuffer.drawString("You Win", FRAMEX / 2, FRAMEY / 2);
+					mob.setRoom(map.getRoom((int)(Math.random() * map.getColumns()), (int)(Math.random() * map.getRows())));
+					//				satan.setRoom(map.getRoom(2, 1));
+					mob.setHealth(mob.MAXHEALTH);
+				}
+			}
+			
+			if(mobs.size() < map.getFloor()){
+				mobs.add(new Monster(map.getRoom((int)(Math.random() * map.getColumns()), (int)(Math.random() * map.getRows()))));
 			}
 			repaint();
 		}
@@ -130,7 +153,7 @@ public class Main extends JPanel{
 
 	private class KeyListener extends KeyAdapter{
 		public void keyPressed(KeyEvent e){
-			System.out.println("something happened");
+			//			System.out.println("something happened");
 			if(e.getKeyCode() == KeyEvent.VK_W){
 				wdown = true;
 				//				player.up();
@@ -161,28 +184,28 @@ public class Main extends JPanel{
 				}
 			}
 			if(e.getKeyCode() == KeyEvent.VK_E){
-//				if(t.isRunning()){
-//					//					frame.setContentPane(playerInv);
-////					frame.setContentPane(playerInv);
-////					t.stop();
-////					removeKeyListener(kl);
-////					frame.setVisible(true);
-////					playerInv.setVisible(true);
-//					
-//
-//				}
-//				else{
-					//					frame.setContentPane(obj);
-//					t.start();
-//					playerInv.setVisible(false);
-//					getMain().setVisible(true);
-//				}
-//				if(getMain().isVisible()){
-//					getMain().setVisible(false);
-//				}
-//				else{
-//					getMain().setVisible(true);
-//				}
+				//				if(t.isRunning()){
+				//					//					frame.setContentPane(playerInv);
+				////					frame.setContentPane(playerInv);
+				////					t.stop();
+				////					removeKeyListener(kl);
+				////					frame.setVisible(true);
+				////					playerInv.setVisible(true);
+				//					
+				//
+				//				}
+				//				else{
+				//					frame.setContentPane(obj);
+				//					t.start();
+				//					playerInv.setVisible(false);
+				//					getMain().setVisible(true);
+				//				}
+				//				if(getMain().isVisible()){
+				//					getMain().setVisible(false);
+				//				}
+				//				else{
+				//					getMain().setVisible(true);
+				//				}
 				if(playerInv.isVisible())
 					playerInv.setVisible(false);
 				else
@@ -255,14 +278,15 @@ public class Main extends JPanel{
 
 	public static void main(String[] args) {
 		JFrame frame = new JFrame("Main");
+		frame.setBackground(new Color(107, 69, 56));
 		frame.setLocation(0, 0);
 		frame.setSize(FRAMEX, FRAMEY);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		Main m = new Main(frame);
 		frame.setContentPane(m);
 		frame.setVisible(true);
-		
-		
+
+
 	}
 
 }

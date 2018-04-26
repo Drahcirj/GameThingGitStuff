@@ -5,6 +5,7 @@ public class Map {
 	private int rows, columns;
 	private int width, height;
 	private int xPos, yPos;
+	private int floor;
 	
 	public Map(){
 		xPos = 0;
@@ -13,6 +14,7 @@ public class Map {
 		columns = 3;
 //		map = new Grid[rows][columns];
 		map = makeMap(rows, columns);
+		floor = 1;
 	}
 	
 	public Grid[][] makeMap(int rows, int columns){
@@ -75,12 +77,20 @@ public class Map {
 		}
 	}
 	
+	public void nextFloor(){
+		floor++;
+	}
+	
 	public void setXPos(int x){
 		xPos = x;
 	}
 	
 	public void setYPos(int y){
 		yPos = y;
+	}
+	
+	public int getFloor(){
+		return floor;
 	}
 	
 	public int getXPos(){
