@@ -30,6 +30,24 @@ public class Grid {
 		map = null;
 	}
 	
+	public Grid(int rows, int columns){
+		gridXSize = 1000;
+		gridYSize = 1000;
+		blocksPerRow = columns;
+		blocksPerColumn = rows;
+		blockWidth = gridXSize / blocksPerRow;
+		blockHeight = gridYSize / blocksPerColumn;
+		grid = new Block[blocksPerColumn][blocksPerRow];
+		for(int yPosition = 0; yPosition < grid.length; yPosition++){
+			for(int xPosition = 0; xPosition < grid[yPosition].length; xPosition++){
+				grid[yPosition][xPosition] = new Block(xPosition * blockWidth, yPosition * blockHeight, blockWidth, blockHeight, randomBoolean(10));
+			}
+		}
+		xPos = 0;
+		yPos = 0;
+		map = null;
+	}
+	
 	public Grid(Map map, int xPos, int yPos){
 		gridXSize = 1000;
 		gridYSize = 1000;

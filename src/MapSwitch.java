@@ -16,6 +16,7 @@ public class MapSwitch extends Item{
 	
 	public void interact(Player p){
 		p.getGrid().getMap().reset();
+		p.getGrid().getMap().nextFloor();
 		int xPos = getXPos();
 		int yPos = getYPos();
 		int x = getX();

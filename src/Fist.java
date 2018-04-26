@@ -7,12 +7,6 @@ public class Fist extends Weapon {
 		setDamage(5);
 	}
 
-	@Override
-	public void interact(Player p) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public void draw(Graphics g){
 		g.drawRect(10, 10, 10, 10);
 	}
